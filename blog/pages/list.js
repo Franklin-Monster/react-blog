@@ -47,7 +47,7 @@ const MainList = (list) => {
                                     </Link>
                                 </div>
                                 <div className="list-icon">
-                                    <span><CalendarOutlined /> {item.add_time}</span>
+                                    <span><CalendarOutlined /> {(item.add_time).split(' ')[0]}</span>
                                     <span><FolderOutlined /> {item.typeName}</span>
                                     <span><FireOutlined /> {item.view_content}人</span>
                                 </div>

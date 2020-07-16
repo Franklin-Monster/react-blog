@@ -13,7 +13,8 @@ import marked from 'marked'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/monokai-sublime.css'
 import Tocify from '../components/tocify.tsx'
-import  servicePath  from '../config/apiUrl'
+import servicePath from '../config/apiUrl'
+import moment from 'moment'
 import {
     CalendarOutlined,
     FolderOutlined,
@@ -40,7 +41,7 @@ const Detail = (props) => {
         }
     });
 
-    let html = marked(props.article_content)
+
     return (
         <>
             <Head>
@@ -59,19 +60,17 @@ const Detail = (props) => {
                         </div>
 
                         <div>
-                            <div className="detailed-title">
-                                React实战视频教程-技术胖Blog开发(更新08集)
+                            <div className="detailed-title" dangerouslySetInnerHTML={{ __html:marked(props.title) }}>
+                             
                     </div>
 
                             <div className="list-icon center">
-
-                                <span><CalendarOutlined /> 2019-06-28</span>
-                                <span><FolderOutlined /> 视频教程</span>
-                                <span><FireOutlined /> 5498人</span>
+                                <span dangerouslySetInnerHTML={{ __html:(props.add_time).split(' ')[0]}}></span>
+                                <span dangerouslySetInnerHTML={{ __html:marked((props.view_count).toString()+ '人')}}></span>                             
                             </div>
 
                             <div className="detailed-content"
-                                dangerouslySetInnerHTML={{ __html: html }}>
+                                dangerouslySetInnerHTML={{ __html:marked(props.article_content)}}>
 
                             </div>
 
@@ -100,10 +99,14 @@ Detail.getInitialProps = async (context) => {
     let id = context.query.id
     const promise = new Promise((resolve) => {
         axios(servicePath.getArticleById + id).then(res => {
-            // console.log(res);
+    
             resolve(res.data.data[0])
         })
     })
     return await promise
 }
 export default Detail
+
+
+
+ 

@@ -21,17 +21,24 @@ function AddArticle(props) {
 
     useEffect(() => {
         getTypeInfo()
+        // 获取修改文章的ID
+        let tmpId = props.match.params.id
+        if (tmpId) {
+            setArticleId(tmpId)
+            getArticleById(tmpId)
+        }
     }, [])
 
+
     marked.setOptions({
-        renderer: marked.Renderer(),
+        renderer: new marked.Renderer(),
         gfm: true,
         pedantic: false,
         sanitize: false,
         tables: true,
         breaks: false,
         smartLists: true,
-        smartypants: false,
+        smartypants: false
     });
 
     const changeContent = (e) => {
@@ -55,7 +62,7 @@ function AddArticle(props) {
             withCredentials: true
         }).then(
             res => {
-                if (res.data.data == "没有登录") {
+                if (res.data.data === "没有登录") {
                     localStorage.removeItem('openId')
                     props.history.push('/')
                 } else {
@@ -67,17 +74,13 @@ function AddArticle(props) {
     }
     //选择类别后的变化
     const selectTypeHandler = (value) => {
-        setSelectType(value)
+        setSelectType(parseInt(value) + 1)
     }
-
 
     //保存文章的方法
     const saveArticle = () => {
-
         // markedContent()  //先进行转换
-
-
-        if (selectedType == "请选择类型") {
+        if (selectedType === "请选择类型") {
             message.error('必须选择文章类别')
             return false
         } else if (!articleTitle) {
@@ -104,7 +107,6 @@ function AddArticle(props) {
 
 
         if (articleId === 0) {
-            console.log('articleId=:' + articleId)
             dataProps.view_count = Math.ceil(Math.random() * 100) + 1000
             axios({
                 method: 'post',
@@ -141,8 +143,26 @@ function AddArticle(props) {
                 }
             )
         }
+    }
+    const getArticleById = (id) => {
+        axios(servicePath.getArticleById + id, {
+            withCredentials: true,
+            header: { 'Access-Control-Allow-Origin': '*' }
+        }).then(
+            res => {
+                let articleInfo = res.data.data[0]
+                setArticleTitle(articleInfo.title)
+                setArticleContent(articleInfo.article_content)
+                let html = marked(articleInfo.article_content)
+                setMarkdownContent(html)
+                setIntroducemd(articleInfo.introduce)
+                let tmpInt = marked(articleInfo.introduce)
+                setIntroducehtml(tmpInt)
+                setShowDate(articleInfo.add_time)
+                setSelectType(articleInfo.typeId)
 
-
+            }
+        )
     }
     return (
         <div>
@@ -181,6 +201,7 @@ function AddArticle(props) {
                                 placeholder="文章内容"
                                 onChange={changeContent}
                                 onPressEnter={changeContent}
+                                value={articleContent}
                             />
                         </Col>
                         <Col span={12}>
@@ -209,6 +230,7 @@ function AddArticle(props) {
                                 placeholder="文章简介"
                                 onChange={changeIntroduce}
                                 onPressEnter={changeIntroduce}
+                                value={introducemd}
                             />
                             <br /><br />
                             <div className="introduce-html"

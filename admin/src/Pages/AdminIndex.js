@@ -4,14 +4,13 @@ import {
     DesktopOutlined,
     PieChartOutlined,
     FileOutlined,
-    TeamOutlined,
     UserOutlined,
 } from '@ant-design/icons';
 import '../static/css/AdminIndex.css'
 import { Route } from "react-router-dom";
 import AddArticle from './AddArticle'
 import ArticleList from './ArticleList'
-const { Header, Content, Footer, Sider } = Layout;
+const { Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
 
 
@@ -23,7 +22,7 @@ function AdminIndex(props) {
         setCollapsed(collapsed)
     };
     const handleClickArticle = e => {
-        if (e.key == 'addArticle') {
+        if (e.key === 'addArticle') {
             props.history.push('/index/add/')
         } else {
             props.history.push('/index/list/')
@@ -73,12 +72,13 @@ function AdminIndex(props) {
                     </Breadcrumb>
                     <div style={{ padding: 24, background: '#fff', minHeight: 360 }}>
                         <div>
-                         
-                            <Route path="/index/"  exact component={AddArticle} />
+
+                            <Route path="/index/" exact component={AddArticle} />
                             <Route path="/index/add/" exact component={AddArticle} />
                             <Route path="/index/list/" exact component={ArticleList} />
-                     
-                          
+                            <Route path="/index/add/:id" exact component={AddArticle} />
+
+
                         </div>
                     </div>
                 </Content>
